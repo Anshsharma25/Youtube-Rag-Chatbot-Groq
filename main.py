@@ -9,14 +9,36 @@ from rag.groq_llm import get_groq_response
 
 if __name__ == "__main__":
     # video_id = "X0btK9X0Xnk"
-    video_id = "ZFb-W1PAcnI"  # Example video ID
-    query = "how can we do bajrang bhand?"
 
+    # Example video ID
+    video_id = "6y5hGiqd9rA"      #"M8ICGx4p0lA" #"ZFb-W1PAcnI" 
+    query = "how black loops work?"
+
+    # Step 1: Retrieve transcript
     transcript = get_transcript(video_id)
+
+    # Step 2: Chunk transcript
     chunks = chunk_text(transcript)
+
+    # # Debug: Print all chunks
+    # print("=== ALL CHUNKS ===")
+    # for idx, chunk in enumerate(chunks):
+    #     print(f"[{idx}] {chunk}")
+
+
+    # Step 3: Create vectorstore and retrieve relevant chunks
     vs = create_vectorstore(chunks)
     docs = get_relevant_chunks(vs, query)
+
+    # Debug: Print top-k retrieved documents
+    print("=== TOP-K DOCUMENTS ===")
+    for idx, doc in enumerate(docs):
+        print(f"[{idx}] {doc.page_content}")
+
+    # Step 4: Generate response
     response = get_groq_response(query, docs)
 
-    print("\nResponse:\n", response)
 
+
+
+    print("\nResponse:\n", response)
