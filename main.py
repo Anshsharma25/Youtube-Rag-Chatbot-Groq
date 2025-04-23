@@ -11,8 +11,8 @@ if __name__ == "__main__":
     # video_id = "X0btK9X0Xnk"
 
     # Example video ID
-    video_id = "6y5hGiqd9rA"      #"M8ICGx4p0lA" #"ZFb-W1PAcnI" 
-    query = "how black loops work?"
+    video_id =  "i51KM08yQzM" 
+    query = "Ravan kon tha ?"
 
     # Step 1: Retrieve transcript
     transcript = get_transcript(video_id)
