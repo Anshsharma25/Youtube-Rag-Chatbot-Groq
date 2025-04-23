@@ -1,15 +1,14 @@
-from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
 
-def get_transcript(video_id):
-    """Fetch the transcript of a YouTube video using its video ID.
-
-    Args:
-        video_id (str): The ID of the YouTube video.
-
-    Returns:
-        list: A list of dictionaries containing the transcript segments.
+def get_transcript(video_id, languages=["en"]):
     """
-    transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+    Retrieve the transcript for a YouTube video, trying the specified languages first,
+    then falling back to Hindi auto-generated if necessary.
+    """
+    try:
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=languages)
+    except NoTranscriptFound:
+        # Fallback to Hindi auto-generated
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=["hi"])
     full_text = " ".join([d['text'] for d in transcript_list])
     return full_text
-
