@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
-from utils.youtube_utils import get_transcript  # Keep the other imports
+from utils.youtube_utils import get_transcript  
 from utils.chunking_utils import chunk_text
 from utils.embeddings_utils import create_vectorstore
 from rag.retriever import get_relevant_chunks

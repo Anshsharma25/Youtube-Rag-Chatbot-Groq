@@ -2,108 +2,161 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YouTube RAG Chatbot</title>
+  <link rel="stylesheet" href="https://unpkg.com/lucide@latest" />
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f8fa;
       margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+      color: #f1f1f1;
       padding: 2rem;
     }
+
     .container {
-      max-width: 600px;
+      max-width: 640px;
       margin: auto;
-      background-color: #fff;
-      border-radius: 10px;
-      padding: 2rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #1c1f2a;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
     }
-    h2 {
-      text-align: center;
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
     }
+
+    .header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      color: #00ffcc;
+    }
+
+    .icon {
+      width: 28px;
+      height: 28px;
+      stroke: #00ffcc;
+    }
+
     label {
-      font-weight: bold;
-      margin-top: 1rem;
       display: block;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 0.7rem;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #4caf50;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    #responseBox {
-      white-space: pre-wrap;
-      background-color: #eef0f2;
-      padding: 1rem;
-      border-radius: 5px;
       margin-top: 1rem;
-      min-height: 100px;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #ccc;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      background-color: #2a2e3d;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 10px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #00ffcc;
+      outline: none;
+    }
+
+    button {
+      background: linear-gradient(to right, #00b09b, #96c93d);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 0.9rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 255, 204, 0.4);
+    }
+
+    #responseBox {
+      background-color: #2a2e3d;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e0fdf4;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      max-height: 1000px; /* large enough to avoid scroll */
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      .header h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>YouTube RAG Chatbot</h2>
+    <div class="header">
+      <i data-lucide="bot" class="icon"></i>
+      <h2>YouTube RAG Chatbot</h2>
+    </div>
 
-    <!-- Video URL/Input Section -->
-    <label for="videoInput">YouTube Video URL or ID:</label>
+    <label for="videoInput">🎥 YouTube Video URL or ID:</label>
     <input type="text" id="videoInput" placeholder="e.g. https://youtu.be/ZFb-W1PAcnI" />
 
-    <!-- Question Section -->
-    <label for="query">Your Question:</label>
+    <label for="query">❓ Your Question:</label>
     <textarea id="query" rows="3" placeholder="Ask something about the video..."></textarea>
 
-    <!-- Submit Button -->
-    <button onclick="sendQuery()">Ask</button>
+    <button onclick="sendQuery()">🚀 Ask Now</button>
 
-    <!-- Response Display -->
-    <div id="responseBox"></div>
+    <div id="responseBox">🤖 Bot response will appear here.</div>
   </div>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
-    // Function to handle the query submission
+    lucide.createIcons();
+
     async function sendQuery() {
       const videoInput = document.getElementById('videoInput').value.trim();
       const query = document.getElementById('query').value.trim();
       const responseBox = document.getElementById('responseBox');
 
-      // Validation for empty input fields
       if (!videoInput || !query) {
-        responseBox.textContent = 'Please enter both a video URL/ID and a question.';
+        responseBox.textContent = '⚠️ Please enter both a video URL/ID and a question.';
         return;
       }
 
-      // Display "Thinking..." message
-      responseBox.textContent = 'Thinking...';
+      responseBox.textContent = '💬 Thinking...';
 
       try {
-        // Send POST request to Flask API
         const res = await fetch('/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ video_input: videoInput, query: query })
         });
 
-        // Parse the JSON response from the API
         const data = await res.json();
-        
-        // Display the response or error
-        responseBox.textContent = data.response || data.error || 'No response received.';
+        responseBox.textContent = data.response || data.error || '⚠️ No response received.';
       } catch (error) {
-        responseBox.textContent = 'Error: ' + error.message;
+        responseBox.textContent = '❌ Error: ' + error.message;
       }
     }
   </script>
