@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube RAG Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f8fa;
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #responseBox {
+      white-space: pre-wrap;
+      background-color: #eef0f2;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-top: 1rem;
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>YouTube RAG Chatbot</h2>
+
+    <!-- Video URL/Input Section -->
+    <label for="videoInput">YouTube Video URL or ID:</label>
+    <input type="text" id="videoInput" placeholder="e.g. https://youtu.be/ZFb-W1PAcnI" />
+
+    <!-- Question Section -->
+    <label for="query">Your Question:</label>
+    <textarea id="query" rows="3" placeholder="Ask something about the video..."></textarea>
+
+    <!-- Submit Button -->
+    <button onclick="sendQuery()">Ask</button>
+
+    <!-- Response Display -->
+    <div id="responseBox"></div>
+  </div>
+
+  <script>
+    // Function to handle the query submission
+    async function sendQuery() {
+      const videoInput = document.getElementById('videoInput').value.trim();
+      const query = document.getElementById('query').value.trim();
+      const responseBox = document.getElementById('responseBox');
+
+      // Validation for empty input fields
+      if (!videoInput || !query) {
+        responseBox.textContent = 'Please enter both a video URL/ID and a question.';
+        return;
+      }
+
+      // Display "Thinking..." message
+      responseBox.textContent = 'Thinking...';
+
+      try {
+        // Send POST request to Flask API
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ video_input: videoInput, query: query })
+        });
+
+        // Parse the JSON response from the API
+        const data = await res.json();
+        
+        // Display the response or error
+        responseBox.textContent = data.response || data.error || 'No response received.';
+      } catch (error) {
+        responseBox.textContent = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
